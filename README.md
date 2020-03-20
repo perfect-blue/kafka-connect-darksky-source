@@ -1,6 +1,6 @@
 # Kafka Connect Source Dark Sky
 
-This connector allows you to get stream of weather condition from DarkSky, [using DarkSky API](https://darksky.net/dev/docs)
+This connector allows you to get stream of weather condition from DarkSky using [DarkSky API](https://darksky.net/dev/docs)
 
 # Configuration
 ```
