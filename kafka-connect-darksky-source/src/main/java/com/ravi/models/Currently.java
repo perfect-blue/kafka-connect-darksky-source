@@ -12,9 +12,7 @@ public class Currently {
     private String time;
     private String summary;
     private String icon;
-    private int nearestStormDistance;
     private double precipIntensity;
-    private double precipIntensityError;
     private double precipProbability;
     private String precipType;
     private double temperature;
@@ -34,8 +32,8 @@ public class Currently {
 
     }
 
-    public Currently(String time, String summary, String icon, int nearestStormDistance, double precipIntensity,
-                     double precipIntensityError, double precipProbability, String precipType, double temperature,
+    public Currently(String time, String summary, String icon, double precipIntensity,
+                     double precipProbability, String precipType, double temperature,
                      double apparentTemperature, double dewPoint, double humidity, double pressure, double windSpeed,
                      double windGust, double windBearing, double cloudCover, int uvIndex, double visibility,
                      double ozone) {
@@ -43,9 +41,7 @@ public class Currently {
         this.time = time;
         this.summary = summary;
         this.icon = icon;
-        this.nearestStormDistance = nearestStormDistance;
         this.precipIntensity = precipIntensity;
-        this.precipIntensityError = precipIntensityError;
         this.precipProbability = precipProbability;
         this.precipType = precipType;
         this.temperature = temperature;
@@ -86,13 +82,6 @@ public class Currently {
         this.icon = icon;
     }
 
-    public int getNearestStormDistance() {
-        return nearestStormDistance;
-    }
-
-    public void setNearestStormDistance(int nearestStormDistance) {
-        this.nearestStormDistance = nearestStormDistance;
-    }
 
     public double getPrecipIntensity() {
         return precipIntensity;
@@ -102,13 +91,6 @@ public class Currently {
         this.precipIntensity = precipIntensity;
     }
 
-    public double getPrecipIntensityError() {
-        return precipIntensityError;
-    }
-
-    public void setPrecipIntensityError(double precipIntensityError) {
-        this.precipIntensityError = precipIntensityError;
-    }
 
     public double getPrecipProbability() {
         return precipProbability;
@@ -228,9 +210,7 @@ public class Currently {
         currently.setTime(instant.toString());
         currently.setSummary(jsonObject.getString(SUMMARY_FIELD));
         currently.setIcon(jsonObject.getString(ICON_FIELD));
-        currently.setNearestStormDistance(jsonObject.getInt(NEARESTSTORMDISTANCE_FIELD));
         currently.setPrecipIntensity(jsonObject.getDouble(PRECIPINTENCITY_FIELD));
-        currently.setPrecipIntensityError(jsonObject.getDouble(PRECIPINTENCITYERROR_FIELD));
         currently.setPrecipProbability(jsonObject.getDouble(PRECIPPROBABILITY_FIELD));
         currently.setPrecipType(jsonObject.getString(PRECIPTYPE_FIELD));
         currently.setTemperature(jsonObject.getDouble(TEMPERATURE_FIELD));

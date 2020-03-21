@@ -15,8 +15,6 @@ public class DarkSkySourceConnectorConfigTest {
   private Map<String,String> initialConfig(){
     Map<String,String> baseProps=new HashMap<>();
     baseProps.put(TOPIC_CONFIG,"weather.darksky");
-    baseProps.put(BATCH_SIZE_CONFIG, "100");
-    baseProps.put(SECRET_KEY_CONFIG,"1234567");
     return baseProps;
   }
 
@@ -58,8 +56,8 @@ public class DarkSkySourceConnectorConfigTest {
   @Test
   public void validateCities() {
     Map<String, String> config = initialConfig();
-    config.put(CITIES_CONFIG, "username");
-    ConfigValue configValue = configDef.validateAll(config).get(CITIES_CONFIG);
+    config.put(CITY_CONFIG, "username");
+    ConfigValue configValue = configDef.validateAll(config).get(CITY_CONFIG);
     assert (configValue.errorMessages().size() == 0);
   }
 
@@ -69,5 +67,27 @@ public class DarkSkySourceConnectorConfigTest {
     config.put(SECRET_KEY_CONFIG, "password");
     ConfigValue configValue = configDef.validateAll(config).get(SECRET_KEY_CONFIG);
     assert (configValue.errorMessages().size() == 0);
+  }
+
+  @Test
+  public void validateDate(){
+    Map<String,String> config= initialConfig();
+    config.put(DATE_CONFIG,"not-a-date");
+    ConfigValue configValue=configDef.validateAll(config).get(DATE_CONFIG);
+    assert (configValue.errorMessages().size()>0);
+  }
+
+  @Test
+  public void validateMaxRequest(){
+
+    Map<String,String> config = initialConfig();
+    config.put(MAX_REQUEST_CONFIG,"-1");
+    ConfigValue configValue =configDef.validateAll(config).get(MAX_REQUEST_CONFIG);
+    assert (configValue.errorMessages().size()>0);
+
+    config = initialConfig();
+    config.put(MAX_REQUEST_CONFIG, "20001");
+    configValue = configDef.validateAll(config).get(MAX_REQUEST_CONFIG);
+    assert (configValue.errorMessages().size() > 0);
   }
 }

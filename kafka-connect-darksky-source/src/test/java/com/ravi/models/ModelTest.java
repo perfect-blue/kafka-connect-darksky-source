@@ -105,9 +105,7 @@ public class ModelTest {
         assertEquals(currently.getTime(),"2017-11-06T18:34:37Z");
         assertEquals(currently.getSummary(),"Drizzle");
         assertEquals(currently.getIcon(),"rain");
-        assertEquals(currently.getNearestStormDistance(),0);
         assertEquals(currently.getPrecipIntensity(),0.0089,0.0001);
-        assertEquals(currently.getPrecipIntensityError(),0.0046,0.0001);
         assertEquals(currently.getPrecipProbability(),0.9,0.01);
         assertEquals(currently.getPrecipType(),"rain");
         assertEquals(currently.getTemperature(),66.1,0.01);
@@ -122,6 +120,11 @@ public class ModelTest {
         assertEquals(currently.getUvIndex(),1,0.01);
         assertEquals(currently.getVisibility(),9.84,0.01);
         assertEquals(currently.getOzone(),267.44,0.01);
+
+        //data test
+        List<Currently> data=weather.getData();
+        System.out.println(data.size());
+
 
     }
 

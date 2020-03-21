@@ -11,14 +11,13 @@ public class DarkSkySchema {
     public static String LONGITUDE_FIELD="longitude";
     //timezone(double)
     public static String TIMEZONE_FIELD="timezone";
-    //place
-    public static String PLACE_FIELD="place";
+
 
     //currently (object)
     public static String CURRENTLY_FIELD="currently";
-
-    //flags(object)
-    public static String FLAGS_FIELD="flags";
+    public static String HOURLY_FIELD="hourly";
+    //data(array)
+    public static String DATA_FIELD="data";
 
     //time
     public static String TIME_FIELD="time";
@@ -26,12 +25,10 @@ public class DarkSkySchema {
     public static String SUMMARY_FIELD="summary";
     //icon
     public static String ICON_FIELD="icon";
-    //nearestStormDistance
-    public static String NEARESTSTORMDISTANCE_FIELD="nearestStormDistance";
+
     //precipIntencity
     public static String PRECIPINTENCITY_FIELD="precipIntensity";
-    //precipIntencityError
-    public static String PRECIPINTENCITYERROR_FIELD="precipIntensityError";
+
     //precipProbability
     public static String PRECIPPROBABILITY_FIELD="precipProbability";
     //precipType
@@ -60,62 +57,77 @@ public class DarkSkySchema {
     public static String VISIBILITY_FIELD="visibility";
     //ozone
     public static String OZONE_FIELD="ozone";
-    //units
-    public static String UNITS_FIELD="units";
-    //nearest station
-    public static String NEAREST_STATION_FIELD="nearest-station-field";
+    //Date
+    public static String DATE_FIELD="date";
 
+    //location field
+    public static String LOCATION_FIELD="location";
 
     //SCHEMA NAMES
     public static String SCHEMA_CURRENTLY="currently";
-    public static String SCHEMA_FLAGS="flags";
     public static String SCHEMA_HOURLY="hour";
     public static String SCHEMA_KEY="key";
     public static String SCHEMA_VALUE="value";
 
     //KEY Schema
     public static Schema KEY_SCHEMA=SchemaBuilder.struct().name(SCHEMA_KEY)
-            .field(LATITTUDE_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(LONGITUDE_FIELD,Schema.FLOAT32_SCHEMA)
+            .field(LATITTUDE_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(LONGITUDE_FIELD,Schema.FLOAT64_SCHEMA)
             .build();
 
-    //HOUR SCHEMA
+    //CURRENTLY SCHEMA
     public  static Schema CURRENTLY_SCHEMA=SchemaBuilder.struct().name(SCHEMA_CURRENTLY)
             .version(1)
-            .field(TIME_FIELD,Schema.FLOAT32_SCHEMA)
+            .field(TIME_FIELD,Schema.STRING_SCHEMA)
             .field(SUMMARY_FIELD,Schema.STRING_SCHEMA)
-            .field(NEARESTSTORMDISTANCE_FIELD,Schema.INT32_SCHEMA)
-            .field(PRECIPINTENCITY_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(PRECIPINTENCITYERROR_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(PRECIPPROBABILITY_FIELD,Schema.FLOAT32_SCHEMA)
+            .field(PRECIPINTENCITY_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(PRECIPPROBABILITY_FIELD,Schema.FLOAT64_SCHEMA)
             .field(PRECIPTYPE_FIELD,Schema.STRING_SCHEMA)
-            .field(TEMPERATURE_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(APPARENT_TEMPERATURE_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(DEW_POINT_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(HUMIDITY_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(PRESSURE_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(WIND_SPEED_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(WIND_GUST_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(WIND_BEARING_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(CLOUD_COVER_FIELD,Schema.FLOAT32_SCHEMA)
+            .field(TEMPERATURE_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(APPARENT_TEMPERATURE_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(DEW_POINT_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(HUMIDITY_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(PRESSURE_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(WIND_SPEED_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(WIND_GUST_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(WIND_BEARING_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(CLOUD_COVER_FIELD,Schema.FLOAT64_SCHEMA)
             .field(UV_INDEX_FIELD,Schema.INT32_SCHEMA)
-            .field(VISIBILITY_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(OZONE_FIELD,Schema.FLOAT32_SCHEMA)
+            .field(VISIBILITY_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(OZONE_FIELD,Schema.FLOAT64_SCHEMA)
             .build();
 
-    public static Schema FLAG_SCHEMA=SchemaBuilder.struct().name(SCHEMA_FLAGS)
+    //HOURLY SCHEMA
+    public  static Schema HOURLY_SCHEMA=SchemaBuilder.struct().name(SCHEMA_HOURLY)
             .version(1)
-            .field(UNITS_FIELD,Schema.STRING_SCHEMA)
-            .field(NEAREST_STATION_FIELD,Schema.STRING_SCHEMA)
+            .field(TIME_FIELD,Schema.STRING_SCHEMA)
+            .field(SUMMARY_FIELD,Schema.STRING_SCHEMA)
+            .field(PRECIPINTENCITY_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(PRECIPPROBABILITY_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(PRECIPTYPE_FIELD,Schema.STRING_SCHEMA)
+            .field(TEMPERATURE_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(APPARENT_TEMPERATURE_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(DEW_POINT_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(HUMIDITY_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(PRESSURE_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(WIND_SPEED_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(WIND_GUST_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(WIND_BEARING_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(CLOUD_COVER_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(UV_INDEX_FIELD,Schema.INT32_SCHEMA)
+            .field(VISIBILITY_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(OZONE_FIELD,Schema.FLOAT64_SCHEMA)
             .build();
 
     public static Schema VALUE_SCHEMA=SchemaBuilder.struct().name(SCHEMA_VALUE)
             .version(1)
-            .field(LATITTUDE_FIELD,Schema.FLOAT32_SCHEMA)
-            .field(LONGITUDE_FIELD,Schema.FLOAT32_SCHEMA)
+            .field(LATITTUDE_FIELD,Schema.FLOAT64_SCHEMA)
+            .field(LONGITUDE_FIELD,Schema.FLOAT64_SCHEMA)
             .field(TIMEZONE_FIELD,Schema.STRING_SCHEMA)
             .field(CURRENTLY_FIELD,CURRENTLY_SCHEMA)
-            .field(FLAGS_FIELD,FLAG_SCHEMA)
+            .field(LOCATION_FIELD,Schema.STRING_SCHEMA)
+            .field(DATE_FIELD,Schema.STRING_SCHEMA)
+            .field(DATA_FIELD,SchemaBuilder.array(HOURLY_SCHEMA))
             .build();
 
 

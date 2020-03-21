@@ -1,6 +1,12 @@
 package com.ravi.models;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
 import static  com.ravi.DarkSkySchema.*;
 
 public class Weather {
@@ -9,16 +15,15 @@ public class Weather {
    private double longitude;
    private String Timezone;
    private Currently currently;
-   private Weather weather;
+   private List<Currently> data=new ArrayList<>();
 
    public Weather(){}
 
-    public Weather(double latitude, double longitude, String timezone, Currently currently, Weather weather) {
+    public Weather(double latitude, double longitude, String timezone, Currently currently) {
         this.latitude = latitude;
         this.longitude = longitude;
         Timezone = timezone;
         this.currently = currently;
-        this.weather = weather;
     }
 
     public double getLatitude() {
@@ -53,13 +58,12 @@ public class Weather {
         this.currently = currently;
     }
 
-
-    public Weather getWeather() {
-        return weather;
+    public void  addData(Currently currently){
+       this.data.add(currently);
     }
 
-    public void setWeather(Weather weather) {
-        this.weather = weather;
+    public List<Currently> getData(){
+       return this.data;
     }
 
     public static Weather fromJson(JSONObject jsonObject){
@@ -71,6 +75,12 @@ public class Weather {
        Currently currently=Currently.fromJson(jsonObject.getJSONObject(CURRENTLY_FIELD));
        weather.setCurrently(currently);
 
+        JSONArray jsonArray=jsonObject.getJSONObject(HOURLY_FIELD).getJSONArray(DATA_FIELD);
+        for (int i =0 ;i <jsonArray.length();i++){
+            JSONObject data=jsonArray.getJSONObject(i);
+            Currently currently1=Currently.fromJson(data);
+            weather.addData(currently);
+        }
        return weather;
     }
 }
