@@ -7,16 +7,12 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.GetRequest;
 
-import com.ravi.models.GeoLocation;
 import org.apache.kafka.connect.errors.ConnectException;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 public class DarkSkyHttpClient {
     private static final Logger log = LoggerFactory.getLogger(DarkSkyHttpClient.class);
@@ -26,11 +22,9 @@ public class DarkSkyHttpClient {
     private Integer XRateRemaining;
 
     DarkSkySourceConnectorConfig config;
-    private GeoLocation geoLocation;
 
     public DarkSkyHttpClient(DarkSkySourceConnectorConfig config){
         this.config=config;
-        this.geoLocation=new GeoLocation(this.config.getCitiesConfig());
         this.XMaxCalls=this.config.getMaxRequestConfig();
     }
 
@@ -57,10 +51,10 @@ public class DarkSkyHttpClient {
         }
     }
 
-    protected JSONArray getWeatherHistory(Instant date) throws InterruptedException {
+    protected JSONObject getWeatherHistory(Instant date) throws InterruptedException {
         HttpResponse<JsonNode> jsonResponse;
         try{
-            sleep(5);
+            sleep(10);
            jsonResponse =getWeatherHistoryAPI(date);
             Headers headers = jsonResponse.getHeaders();//set the headers
             XCalls= Integer.valueOf(headers.getFirst("X-Forecast-API-Calls"));
@@ -68,8 +62,7 @@ public class DarkSkyHttpClient {
             switch (jsonResponse.getStatus()){
                 case 200:
                    JSONObject jsonObject=jsonResponse.getBody().getObject();
-                   JSONArray data=jsonObject.getJSONObject("hourly").getJSONArray("data");
-                   return data;
+                   return jsonObject;
                 case 401:
                     throw new ConnectException("Bad GitHub credentials provided, please edit your config");
                 case 403:
@@ -91,7 +84,7 @@ public class DarkSkyHttpClient {
         }catch (UnirestException e){
             e.printStackTrace();
             Thread.sleep(5000L);
-            return new JSONArray();
+            return new JSONObject();
         }
     }
     protected HttpResponse<JsonNode> getWeatherHistoryAPI(Instant date) throws UnirestException {
@@ -110,8 +103,8 @@ public class DarkSkyHttpClient {
         return String.format(
              "https://api.darksky.net/forecast/%s/%s,%s,%s?units=si",
              config.getSecretKeyConfig(),
-             geoLocation.getLatitude(),
-             geoLocation.getLongitude(),
+             config.getLatitude(),
+             config.getLongitude(),
                 date.toString()
         );
     }
@@ -120,8 +113,8 @@ public class DarkSkyHttpClient {
         return String.format(
            "https://api.darksky.net/forecast/%s/%s,%s?units=%s",
                 config.getSecretKeyConfig(),
-                geoLocation.getLatitude(),
-                geoLocation.getLongitude(),
+                config.getLatitude(),
+                config.getLongitude(),
                 "si"
         );
     }
@@ -130,7 +123,4 @@ public class DarkSkyHttpClient {
         Thread.sleep(1000*second);
     }
 
-    public GeoLocation getGeoLocation() {
-        return geoLocation;
-    }
 }

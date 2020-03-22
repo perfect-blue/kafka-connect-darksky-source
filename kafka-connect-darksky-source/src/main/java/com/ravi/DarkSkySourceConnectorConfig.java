@@ -1,8 +1,6 @@
 package com.ravi;
 
-import com.ravi.validators.BatchSizeValidator;
-import com.ravi.validators.RequestValidator;
-import com.ravi.validators.TimestampValidator;
+import com.ravi.validators.*;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigDef.Type;
@@ -18,9 +16,14 @@ public class DarkSkySourceConnectorConfig extends AbstractConfig {
   public  static final String TOPIC_CONFIG="topic";
   private static final String TOPIC_DOC="topic to write to";
 
-  //location
-  public static final String CITY_CONFIG="cities";
-  private static final String CITY_DOC="get weather from certain cities";
+
+  //Latitude
+  public static final String LATITUDE_CONFIG="latitude";
+  private static final String LATITUDE_DOC="latitude of a place";
+
+  //Longitude
+  public static final String LONGITUDE_CONFIG="longitude";
+  private static final String LONGITUDE_DOC="longitude of a place";
 
   //batchsize
   public static final String BATCH_SIZE_CONFIG="batch.size";
@@ -51,12 +54,13 @@ public class DarkSkySourceConnectorConfig extends AbstractConfig {
   public static ConfigDef conf() {
     return new ConfigDef()
         .define(TOPIC_CONFIG,Type.STRING,"",Importance.HIGH,TOPIC_DOC)
-        .define(CITY_CONFIG,Type.STRING,"",Importance.HIGH,CITY_DOC)
         .define(BATCH_SIZE_CONFIG,Type.INT,100,new BatchSizeValidator(),Importance.LOW,BATCH_SIZE_DOC)
         .define(SECRET_KEY_CONFIG,Type.STRING,"",Importance.HIGH,SECRET_KEY_DOCS)
         .define(DATE_CONFIG, Type.STRING, ZonedDateTime.now().minusYears(1).toInstant().toString(), new TimestampValidator(),
                 Importance.HIGH, DATE_DOC)
-         .define(MAX_REQUEST_CONFIG,Type.INT,1000,new RequestValidator(),Importance.HIGH, MAX_REQUEST_CONFIG);
+         .define(MAX_REQUEST_CONFIG,Type.INT,1000,new RequestValidator(),Importance.HIGH, MAX_REQUEST_DOC)
+         .define(LATITUDE_CONFIG,Type.DOUBLE,42.3601, new LatitudeValidator(), Importance.HIGH, LATITUDE_DOC)
+         .define(LONGITUDE_CONFIG,Type.DOUBLE, -71.0589, new LongitudeValidator(), Importance.HIGH, LONGITUDE_DOC);
 
 
   }
@@ -69,9 +73,6 @@ public class DarkSkySourceConnectorConfig extends AbstractConfig {
     return this.getString(TOPIC_CONFIG);
   }
 
-  public String getCitiesConfig() {
-    return this.getString(CITY_CONFIG);
-  }
 
   public Integer getBatchSizeConfig() {
     return this.getInt(BATCH_SIZE_CONFIG);
@@ -80,4 +81,8 @@ public class DarkSkySourceConnectorConfig extends AbstractConfig {
   public String getSecretKeyConfig() {
     return this.getString(SECRET_KEY_CONFIG);
   }
+
+  public Double getLatitude(){return this.getDouble(LATITUDE_CONFIG);}
+
+  public Double getLongitude(){return this.getDouble(LONGITUDE_CONFIG);}
 }

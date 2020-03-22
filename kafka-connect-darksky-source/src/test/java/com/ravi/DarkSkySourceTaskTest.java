@@ -3,6 +3,7 @@ package com.ravi;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.ravi.models.Currently;
 import org.apache.kafka.connect.source.SourceRecord;
 import com.ravi.models.Weather;
 import org.json.JSONArray;
@@ -26,9 +27,8 @@ public class DarkSkySourceTaskTest {
   private Map<String,String> initialConfig(){
     Map<String,String> baseProps = new HashMap<>();
     baseProps.put(TOPIC_CONFIG, "darksky.weather");
-    baseProps.put(CITY_CONFIG,"bandung");
     baseProps.put(BATCH_SIZE_CONFIG,batchSize.toString());
-    baseProps.put(DATE_CONFIG,"2020-01-01T00:00:00Z");
+    baseProps.put(DATE_CONFIG,"2019-03-22T00:00:00Z");
     baseProps.put(SECRET_KEY_CONFIG,"fd5db841561d25a99b2c4cb0e5e80c4a");
 
     return baseProps;
@@ -40,14 +40,8 @@ public class DarkSkySourceTaskTest {
     darkSkySourceTask.config=new DarkSkySourceConnectorConfig(initialConfig());
     darkSkySourceTask.client=new DarkSkyHttpClient(darkSkySourceTask.config);
 
-    HttpResponse<JsonNode> httpResponse =darkSkySourceTask.client.getWeatherHistoryAPI(darkSkySourceTask.config.getDateConfig());
-    if(httpResponse.getStatus()!=403){
-      assert(httpResponse.getStatus()==200);
-      JSONObject jsonObject=(JSONObject) httpResponse.getBody().getObject();
-      JSONArray jsonArray = jsonObject.getJSONObject("hourly").getJSONArray(DATA_FIELD);
-      Weather weather = Weather.fromJson(jsonArray.getJSONObject(0));
-      assert (weather!=null);
-      System.out.println(weather.getTimezone());
-    }
+    darkSkySourceTask.start(initialConfig());
+    List<SourceRecord> records =darkSkySourceTask.poll();
+    System.out.println(records.get(0));
   }
 }

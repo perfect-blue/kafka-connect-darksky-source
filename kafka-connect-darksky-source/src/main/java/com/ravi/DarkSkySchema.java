@@ -60,8 +60,7 @@ public class DarkSkySchema {
     //Date
     public static String DATE_FIELD="date";
 
-    //location field
-    public static String LOCATION_FIELD="location";
+
 
     //SCHEMA NAMES
     public static String SCHEMA_CURRENTLY="currently";
@@ -95,6 +94,7 @@ public class DarkSkySchema {
             .field(UV_INDEX_FIELD,Schema.INT32_SCHEMA)
             .field(VISIBILITY_FIELD,Schema.FLOAT64_SCHEMA)
             .field(OZONE_FIELD,Schema.FLOAT64_SCHEMA)
+            .optional()
             .build();
 
     //HOURLY SCHEMA
@@ -117,6 +117,7 @@ public class DarkSkySchema {
             .field(UV_INDEX_FIELD,Schema.INT32_SCHEMA)
             .field(VISIBILITY_FIELD,Schema.FLOAT64_SCHEMA)
             .field(OZONE_FIELD,Schema.FLOAT64_SCHEMA)
+            .optional()
             .build();
 
     public static Schema VALUE_SCHEMA=SchemaBuilder.struct().name(SCHEMA_VALUE)
@@ -125,7 +126,6 @@ public class DarkSkySchema {
             .field(LONGITUDE_FIELD,Schema.FLOAT64_SCHEMA)
             .field(TIMEZONE_FIELD,Schema.STRING_SCHEMA)
             .field(CURRENTLY_FIELD,CURRENTLY_SCHEMA)
-            .field(LOCATION_FIELD,Schema.STRING_SCHEMA)
             .field(DATE_FIELD,Schema.STRING_SCHEMA)
             .field(DATA_FIELD,SchemaBuilder.array(HOURLY_SCHEMA))
             .build();

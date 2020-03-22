@@ -53,13 +53,6 @@ public class DarkSkySourceConnectorConfigTest {
 
   }
 
-  @Test
-  public void validateCities() {
-    Map<String, String> config = initialConfig();
-    config.put(CITY_CONFIG, "username");
-    ConfigValue configValue = configDef.validateAll(config).get(CITY_CONFIG);
-    assert (configValue.errorMessages().size() == 0);
-  }
 
   @Test
   public void validatePassword() {

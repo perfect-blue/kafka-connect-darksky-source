@@ -6,12 +6,14 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
+import org.classpath.icedtea.Config;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +25,7 @@ import static com.ravi.DarkSkySchema.*;
 public class DarkSkySourceTask extends SourceTask {
   static final Logger log = LoggerFactory.getLogger(DarkSkySourceTask.class);
 
-  protected Instant nextDate;
+  protected Instant nextDateQuery;
   public DarkSkySourceConnectorConfig config;
 
   DarkSkyHttpClient client;
@@ -36,37 +38,42 @@ public class DarkSkySourceTask extends SourceTask {
   @Override
   public void start(Map<String, String> map) {
     config=new DarkSkySourceConnectorConfig(map);
-    this.nextDate=config.getDateConfig();
+    initializeVariables();
     client=new DarkSkyHttpClient(config);
-    log.debug(this.nextDate.plus(1,ChronoUnit.DAYS).toString());
   }
 
+
+  private void initializeVariables(){
+   nextDateQuery=config.getDateConfig();
+  }
 
   @Override
   public List<SourceRecord> poll() throws InterruptedException {
       final ArrayList<SourceRecord> records = new ArrayList<>();
-      JSONArray weatherArray = client.getWeatherHistory(this.nextDate);
-      int i=0;
-      int data=0;
-      for(Object obj: weatherArray){
-        Weather weather = Weather.fromJson((JSONObject) obj);
-        SourceRecord sourceRecord = generateSourceRecord(weather,this.nextDate);
-        records.add(sourceRecord);
-        i++;
-        data++;
+      JSONObject weatherObject = client.getWeatherHistory(nextDateQuery);
+      Weather weather = Weather.fromJson(weatherObject);
+      List<Currently> dataList= weather.getData();
+
+      SourceRecord sourceRecord = generateSourceRecord(weather);
+      records.add(sourceRecord);
+      int i=1;
+      if(!nextDateQuery.equals(ZonedDateTime.now())){
+        nextDateQuery=nextDateQuery.plus(dataList.size(),ChronoUnit.HOURS);
+      }else{
+        nextDateQuery=ZonedDateTime.now().toInstant();
+        stop();
       }
 
-      if (i > 0) log.info(String.format("Fetched %s record(s)", i));
-      this.nextDate=this.nextDate.plus(data/24,ChronoUnit.DAYS);
-
+      log.info(String.format("fetched %s record(s)",i));
+      i++;
       return records;
   }
 
 
-  private SourceRecord generateSourceRecord(Weather weather, Instant date){
+  private SourceRecord generateSourceRecord(Weather weather){
     return new SourceRecord(
             sourcePartition(),
-            sourceOffset(date),
+            sourceOffset(),
             config.getTopicConfig(),
             null,
             KEY_SCHEMA,
@@ -75,6 +82,7 @@ public class DarkSkySourceTask extends SourceTask {
             buildRecordValue(weather)
             );
   }
+
   @Override
   public void stop() {
 
@@ -82,13 +90,14 @@ public class DarkSkySourceTask extends SourceTask {
 
   private Map<String,String> sourcePartition(){
     Map<String,String> map = new HashMap<>();
-    map.put(LOCATION_FIELD,config.getCitiesConfig());
+    map.put(LATITTUDE_FIELD,config.getLatitude().toString());
+    map.put(LONGITUDE_FIELD, config.getLongitude().toString());
     return map;
   }
 
-  private Map<String,String> sourceOffset(Instant date){
+  private Map<String,String> sourceOffset(){
     Map<String,String> map = new HashMap<>();
-    map.put(DATE_FIELD,date.toString());
+    map.put(DATE_FIELD,nextDateQuery.toString());
     return map;
   }
 
@@ -154,10 +163,8 @@ public class DarkSkySourceTask extends SourceTask {
             .put(LONGITUDE_FIELD,weather.getLongitude())
             .put(TIMEZONE_FIELD,weather.getTimezone())
             .put(CURRENTLY_FIELD,CurrentlyStruct)
-            .put(LOCATION_FIELD,client.getGeoLocation().getName())
-            .put(DATE_FIELD,nextDate)
+            .put(DATE_FIELD,nextDateQuery.toString())
             .put(DATA_FIELD,dataStruct);
-
 
     return valueStruct;
 

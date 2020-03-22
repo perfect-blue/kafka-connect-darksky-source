@@ -208,11 +208,11 @@ public class Currently {
         Currently currently = new Currently();
         Instant instant =Instant.ofEpochMilli(jsonObject.getLong(TIME_FIELD)*1000);
         currently.setTime(instant.toString());
-        currently.setSummary(jsonObject.getString(SUMMARY_FIELD));
-        currently.setIcon(jsonObject.getString(ICON_FIELD));
-        currently.setPrecipIntensity(jsonObject.getDouble(PRECIPINTENCITY_FIELD));
-        currently.setPrecipProbability(jsonObject.getDouble(PRECIPPROBABILITY_FIELD));
-        currently.setPrecipType(jsonObject.getString(PRECIPTYPE_FIELD));
+        currently.setSummary(jsonObject.optString(SUMMARY_FIELD));
+        currently.setIcon(jsonObject.optString(ICON_FIELD));
+        currently.setPrecipIntensity(jsonObject.optDouble(PRECIPINTENCITY_FIELD));
+        currently.setPrecipProbability(jsonObject.optDouble(PRECIPPROBABILITY_FIELD));
+        currently.setPrecipType(jsonObject.optString(PRECIPTYPE_FIELD));
         currently.setTemperature(jsonObject.getDouble(TEMPERATURE_FIELD));
         currently.setApparentTemperature(jsonObject.getDouble(APPARENT_TEMPERATURE_FIELD));
         currently.setDewPoint(jsonObject.getDouble(DEW_POINT_FIELD));

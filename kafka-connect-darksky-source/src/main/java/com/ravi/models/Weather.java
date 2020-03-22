@@ -17,12 +17,13 @@ public class Weather {
    private Currently currently;
    private List<Currently> data=new ArrayList<>();
 
+
    public Weather(){}
 
     public Weather(double latitude, double longitude, String timezone, Currently currently) {
         this.latitude = latitude;
         this.longitude = longitude;
-        Timezone = timezone;
+        this.Timezone = timezone;
         this.currently = currently;
     }
 
@@ -79,8 +80,9 @@ public class Weather {
         for (int i =0 ;i <jsonArray.length();i++){
             JSONObject data=jsonArray.getJSONObject(i);
             Currently currently1=Currently.fromJson(data);
-            weather.addData(currently);
+            weather.addData(currently1);
         }
+
        return weather;
     }
 }
